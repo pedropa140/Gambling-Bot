@@ -7,6 +7,8 @@ import random
 import datetime
 
 import regular_responses
+import gambling_responses
+
 
 # https://discord.com/oauth2/authorize?client_id=1193596778151432312&permissions=1084479764544&scope=bot
 
@@ -48,7 +50,11 @@ def run_discord_bot():
             await regular_responses.hello(message)
         elif command == '!roll_dice':
             await regular_responses.roll_dice(message, client)
+        elif command == '!coin':
+            await regular_responses.coin(message)
         elif command == '!help':
+            await regular_responses.help(message, client)
+        else:
             await regular_responses.help(message, client)
 
     client.run(TOKEN)

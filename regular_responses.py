@@ -29,6 +29,15 @@ async def roll_dice(message : discord.message.Message, client : discord.Client):
     except asyncio.TimeoutError:
         return message.channel.send(f'{message.author.mention} has taken too long to respond.')
 
+async def coin(message : discord.message.Message):
+    result = ''
+    randomNumber = random.randint(1, 2)
+    if randomNumber == 1:
+        result = 'heads'
+    else:
+        result = 'tails'
+    await message.channel.send(f'{message.author.mention} has flipped a {result}!')
+
 async def help(message : discord.message.Message, client : discord.Client):
     helpResponse = f'''
         **How to use {client.user.name}**
