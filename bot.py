@@ -9,7 +9,6 @@ import datetime
 import regular_responses
 import gambling_responses
 
-
 # https://discord.com/oauth2/authorize?client_id=1193596778151432312&permissions=1084479764544&scope=bot
 
 load_dotenv()
@@ -30,9 +29,10 @@ def run_discord_bot():
         if message.author == client.user:
             return
         username = str(message.author)
+        mention = str(message.author.mention)
         user_message = str(message.content)
         channel = str(message.channel)
-        print(f'{username} said: "{user_message}" ({channel})')
+        print(f'{username} ({mention}) said: "{user_message}" ({channel})')
 
         if client.user.mentioned_in(message):
             message_content = str(message.content)
@@ -52,6 +52,8 @@ def run_discord_bot():
             await regular_responses.roll_dice(message, client)
         elif command == '!coin':
             await regular_responses.coin(message)
+        elif command == '!gambling':
+            await gambling_responses.entrance(message, client)
         elif command == '!help':
             await regular_responses.help(message, client)
         else:
