@@ -95,6 +95,7 @@ class UserDatabase:
             return None
 
     def get_balance(self, discord_name):
+        discord_name = discord_name.replace('<', '').replace('>', '').replace('@', '')
         self.c.execute("SELECT balance FROM users WHERE discord_name=?", (discord_name,))
         balance = self.c.fetchone()
         if balance:
@@ -113,9 +114,13 @@ class UserDatabase:
         else:
             print(f"Failed to update balance for {discord_name}. User not found.")
 
+    def update_last_activity(self, discord_name, string):
+        self.c.execute("UPDATE users SET last_activity=? WHERE discord_name=?", (string, discord_name))
+        self.conn.commit()
+        print(f"Last activity updated successfully for {discord_name}.")
 
     def get_leaderboard(self, limit=10):
-        self.c.execute("SELECT name, discord_name, total_earnings FROM users ORDER BY total_earnings DESC LIMIT ?", (limit,))
+        self.c.execute("SELECT name, total_earnings, level FROM users ORDER BY total_earnings DESC LIMIT ?", (limit,))
         leaderboard = self.c.fetchall()
         return leaderboard
     
@@ -129,7 +134,11 @@ class UserDatabase:
 
 def main():
     user_db = UserDatabase()
-    
+    discord_name_valid = "525874420703559702"
+    recent_activities_valid = user_db.get_recent_activities(discord_name_valid)
+    print(f"Recent activities for {discord_name_valid} (in insertion order):")
+    for activity, timestamp in recent_activities_valid:
+        print(f"- {activity} ({timestamp})")
     user_db.close_connection()
 
 if __name__ == "__main__":
