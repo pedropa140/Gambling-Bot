@@ -125,7 +125,7 @@ class UserDatabase:
         return leaderboard
     
     def get_recent_activities(self, discord_name, limit=5):
-        self.c.execute("SELECT activity, timestamp FROM user_activity WHERE discord_name=? ORDER BY timestamp DESC LIMIT ?", (discord_name, limit))
+        self.c.execute("SELECT activity, timestamp FROM user_activity WHERE discord_name=? ORDER BY timestamp", (discord_name,))
         recent_activities = self.c.fetchall()
         return recent_activities
     
