@@ -7,7 +7,6 @@ import random
 import datetime
 import pandas
 
-import player
 
 # DICE
 # COIN FLIP
