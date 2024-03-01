@@ -24,7 +24,7 @@ class UserDatabase:
                            timestamp TEXT)''')
         self.conn.commit()
 
-    def calculate_level(self, total_earnings):
+    def calculate_level(self, total_earnings : int):
         levels_thresholds = [
             0, 1000, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500,
             27500, 30000, 32500, 35000, 37500, 40000, 42500, 45000, 47500, 50000,
@@ -38,18 +38,18 @@ class UserDatabase:
                 return level
         return len(levels_thresholds)
 
-    def add_user(self, name, discord_name, balance, total_earnings, last_activity, date_created):
+    def add_user(self, name : str, discord_name : str, balance : int, total_earnings : str, last_activity : str, date_created : str):
         level = self.calculate_level(total_earnings)
         self.c.execute("INSERT INTO users (name, discord_name, balance, total_earnings, level, last_activity, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)",
                        (name, discord_name, balance, total_earnings, level, last_activity, date_created))
         self.conn.commit()
 
-    def add_user_activity(self, discord_name, activity, timestamp):
+    def add_user_activity(self, discord_name : str, activity : str, timestamp : str):
         self.c.execute("INSERT INTO user_activity (discord_name, activity, timestamp) VALUES (?, ?, ?)",
                        (discord_name, activity, timestamp))
         self.conn.commit()
     
-    def update_total_earnings(self, discord_name, earnings_delta):
+    def update_total_earnings(self, discord_name : str, earnings_delta : str):
         self.c.execute("SELECT total_earnings FROM users WHERE discord_name=?", (discord_name,))
         result = self.c.fetchone()
         if result is not None:
@@ -66,18 +66,18 @@ class UserDatabase:
         else:
             print(f"No user found with Discord name '{discord_name}'.")
     
-    def find_user(self, discord_name):
+    def find_user(self, discord_name : str):
         discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
         self.c.execute("SELECT COUNT(*) FROM users WHERE discord_name=?", (discord_name_cleaned,))
         count = self.c.fetchone()[0]
         return count > 0
     
-    def delete_user(self, discord_name):
+    def delete_user(self, discord_name : str):
         self.c.execute("DELETE FROM users WHERE discord_name=?", (discord_name,))
         self.c.execute("DELETE FROM user_activity WHERE discord_name=?", (discord_name,))
         self.conn.commit()
 
-    def get_user_info(self, discord_name):
+    def get_user_info(self, discord_name : str):
         self.c.execute("SELECT discord_name, name, balance, total_earnings, level, last_activity, date_created FROM users WHERE discord_name=?", (discord_name,))
         user_info = self.c.fetchone()
         if user_info:
@@ -94,7 +94,7 @@ class UserDatabase:
             print(f"No user found with Discord name '{discord_name}'")
             return None
 
-    def get_balance(self, discord_name):
+    def get_balance(self, discord_name : str):
         discord_name = discord_name.replace('<', '').replace('>', '').replace('@', '')
         self.c.execute("SELECT balance FROM users WHERE discord_name=?", (discord_name,))
         balance = self.c.fetchone()
@@ -104,7 +104,7 @@ class UserDatabase:
             print(f"No user found with Discord name '{discord_name}'")
             return None
         
-    def update_balance(self, discord_name, amount):
+    def update_balance(self, discord_name : str, amount : int):
         current_balance = self.get_balance(discord_name)
         if current_balance is not None:
             new_balance = current_balance + amount
@@ -114,7 +114,14 @@ class UserDatabase:
         else:
             print(f"Failed to update balance for {discord_name}. User not found.")
 
-    def update_last_activity(self, discord_name, string):
+    def is_wager_valid(self, discord_name, wager):
+        current_balance = self.get_balance(discord_name)
+        if current_balance is not None:
+            return wager <= current_balance
+        else:
+            return False
+
+    def update_last_activity(self, discord_name : str, string : str):
         self.c.execute("UPDATE users SET last_activity=? WHERE discord_name=?", (string, discord_name))
         self.conn.commit()
         print(f"Last activity updated successfully for {discord_name}.")
@@ -124,7 +131,7 @@ class UserDatabase:
         leaderboard = self.c.fetchall()
         return leaderboard
     
-    def get_recent_activities(self, discord_name, limit=5):
+    def get_recent_activities(self, discord_name : str, limit=5):
         self.c.execute("SELECT activity, timestamp FROM user_activity WHERE discord_name=? ORDER BY timestamp", (discord_name,))
         recent_activities = self.c.fetchall()
         return recent_activities

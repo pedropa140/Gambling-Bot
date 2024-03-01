@@ -102,7 +102,7 @@ async def game_menu(message : discord.message.Message, client : discord.Client, 
         discord_name = message.author.mention
         discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
         if response.content == '1':
-            await gambling_games.menu()
+            await gambling_games.entrance(message, client, user_db)
         elif response.content == '2':
             user_info = user_db.get_user_info(discord_name_cleaned)
             if user_info:
@@ -132,15 +132,13 @@ async def game_menu(message : discord.message.Message, client : discord.Client, 
         elif response.content == '6':
             recent_activities_valid = user_db.get_recent_activities(discord_name_cleaned)
             print(f"Recent activities for {discord_name}:")
-            print_statement = f'{discord_name}\'s Activity History:\n '
+            print_statement = f'{discord_name}\'s Activity History:\n'
             statements = []
             for activity, timestamp in reversed(recent_activities_valid):
                 statements.append(f"- {activity} ({timestamp})")
             
             for activity in range(0, 5):
-                print(activity)
                 print_statement += statements[activity] + '\n'
-            print(print_statement)
             await message.channel.send(print_statement)
         elif response.content == '7':
             con = False
