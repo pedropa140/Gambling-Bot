@@ -103,8 +103,6 @@ async def dice(message : discord.message.Message, client: discord.Client, user_d
         else:
             await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
 
-
-
 # COIN FLIP
 async def coinflip(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
