@@ -3,9 +3,9 @@ import datetime
 
 def format_number(num):
     if num < 10:
-        return f"0{num}"  # Add a leading '0' if the number is less than 10
+        return f"0{num}"
     else:
-        return str(num)  # Otherwise, return the number as a string
+        return str(num)
 
 def git_push(branch="master"):
     try:
