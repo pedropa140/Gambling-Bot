@@ -11,6 +11,7 @@ import math
 from tabulate import tabulate
 
 from user_database import UserDatabase
+from card import Card, Deck, Hand
 
 async def entrance(message : discord.message.Message, client : discord.client, user_db : UserDatabase):
     con = True
@@ -59,8 +60,8 @@ async def dice(message : discord.message.Message, client: discord.Client, user_d
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
-    originalBlanace = user_db.get_balance(discord_name_cleaned)
-    if response.content.isdigit() and int(response.content) <= originalBlanace:
+    originalBalance = user_db.get_balance(discord_name_cleaned)
+    if response.content.isdigit() and int(response.content) <= originalBalance:
         wage = int(response.content)
         if user_db.is_wager_valid(discord_name_cleaned, wage):
             user_dice1 = random.randint(1,6)
@@ -111,8 +112,8 @@ async def coinflip(message : discord.message.Message, client: discord.Client, us
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
-    originalBlanace = user_db.get_balance(discord_name_cleaned)
-    if response.content.isdigit() and int(response.content) <= originalBlanace:
+    originalBalance = user_db.get_balance(discord_name_cleaned)
+    if response.content.isdigit() and int(response.content) <= originalBalance:
         wage = int(response.content)
         await message.channel.send("What is your prediction? (heads | tails)")
         coin = ['heads', 'tails']
@@ -148,10 +149,95 @@ async def blackjack(message : discord.message.Message, client: discord.Client, u
     # create cards
     # when getting a new card also add it to the list to insert to the back of the deck
     # double deck maybe?
-    # split
-    # surrender
-    # insurance
-    # double down
+    await message.channel.send("Enter number of decks to use (1, 2, 6, or 8): ")
+    num_decks = await client.wait_for('message', check=check, timeout=30)
+    num_decks_number = int(num_decks.content)
+    if num_decks_number not in [1, 2, 6, 8]:
+        await message.channel.send("Invalid number of decks. Please choose 1, 2, 6, or 8.")
+        return
+    deck = Deck(num_decks_number)
+    con = True
+    
+    discord_name = message.author.mention
+    discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
+    originalBalance = user_db.get_balance(discord_name_cleaned)
+    newBalance = user_db.get_balance(discord_name_cleaned)
+    while con:
+        await message.channel.send("How much are you wagering?")
+        response = await client.wait_for('message', check=check, timeout=30)
+        if response.content.isdigit() and int(response.content) <= newBalance:
+            wage = int(response.content)
+            deck.shuffle()
+            player_hand = Hand()
+            dealer_hand = Hand()
+
+            player_hand.add_card(deck.deal_card())
+            player_hand.add_card(deck.deal_card())
+
+            dealer_hand.add_card(deck.deal_card())
+            dealer_hand.add_card(deck.deal_card())
+            await message.channel.send(f'''Dealer's Hand
+            One Card Faced Down
+            {dealer_hand.cards[1]}
+            Your Hand:
+            {player_hand}
+            ''')
+            while player_hand.value < 21:
+                await message.channel.send("Do you want to (h)it or (s)tand? ")
+                action = await client.wait_for('message', check=check, timeout=30)
+                action_event = action.content
+                if action_event == 'h':
+                    player_hand.add_card(deck.deal_card())
+                    await message.channel.send("\nYour Hand:")
+                    await message.channel.send(player_hand)
+                elif action_event == 's':
+                    break
+
+            if player_hand.value > 21:
+                await message.channel.send("You bust! Dealer wins.")
+                deck.add_used_cards(player_hand.cards + dealer_hand.cards)
+                continue
+
+            await message.channel.send(f'''Dealer's Hand:
+            {dealer_hand}
+            ''')
+            while dealer_hand.value < 17:
+                dealer_hand.add_card(deck.deal_card())
+                await message.channel.send(dealer_hand)
+
+            if dealer_hand.value > 21 or dealer_hand.value < player_hand.value:
+                await message.channel.send("You win!")
+                user_db.update_total_earnings(discord_name_cleaned, wage)
+                newBalance += wage
+            elif dealer_hand.value == player_hand.value:
+                await message.channel.send("It's a tie!")
+            else:
+                await message.channel.send("Dealer wins.")
+                newBalance -= wage
+        else:
+            await message.channel.send("[ERROR]: Wager over current balance. Program Terminated. Please Try Again.")
+            con = False
+        
+        deck.add_used_cards(player_hand.cards + dealer_hand.cards)
+    difference = newBalance - originalBalance
+    if difference >= originalBalance:
+        user_db.update_balance(discord_name_cleaned, wage)
+        current_date = str(datetime.datetime.now().date())
+        current_time = str(datetime.datetime.now().time())
+        date = f'{current_date}T{current_time}'
+        activity = f'{date} - Won ${wage} playing blackjack on {current_date}'
+        user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
+        user_db.update_last_activity(discord_name_cleaned, activity)
+        await message.channel.send(f'{discord_name} won ${difference} in blackjack')
+    else:
+        user_db.update_balance(discord_name_cleaned, -wage)
+        current_date = str(datetime.datetime.now().date())
+        current_time = str(datetime.datetime.now().time())
+        date = f'{current_date}T{current_time}'
+        activity = f'{date} - Lost ${wage} playing blackjack on {current_date}'
+        user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
+        user_db.update_last_activity(discord_name_cleaned, activity)
+        await message.channel.send(f'{discord_name} lost ${difference} in blackjack')
 
 # ROULETTE
 async def roulette(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
@@ -202,7 +288,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
     total_bet = 0
     discord_name = message.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
-    originalBlanace = user_db.get_balance(discord_name_cleaned)
+    originalBalance = user_db.get_balance(discord_name_cleaned)
     bet_list = []
     error = False
     while con and not error:        
@@ -236,7 +322,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -259,7 +345,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -282,7 +368,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -307,7 +393,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -350,7 +436,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -375,7 +461,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -398,7 +484,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
-                if wage + total_bet > originalBlanace:
+                if wage + total_bet > originalBalance:
                     await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
                     error = True
                 else:
@@ -511,8 +597,8 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
-    originalBlanace = user_db.get_balance(discord_name_cleaned)
-    if response.content.isdigit() and int(response.content) <= originalBlanace:
+    originalBalance = user_db.get_balance(discord_name_cleaned)
+    if response.content.isdigit() and int(response.content) <= originalBalance:
         newBalance = user_db.get_balance(discord_name_cleaned)
         wage = int(response.content)
         con = True
@@ -580,7 +666,7 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
                 ''')
             else:
                 await message.channel.send(f'''"Game over! {discord_name} ran out of money."''')
-        difference = newBalance - originalBlanace
+        difference = newBalance - originalBalance
         if difference > -1:
             user_db.update_balance(discord_name_cleaned, difference)
             current_date = str(datetime.datetime.now().date())
@@ -608,8 +694,8 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
-    originalBlanace = user_db.get_balance(discord_name_cleaned)
-    if response.content.isdigit() and int(response.content) <= originalBlanace:
+    originalBalance = user_db.get_balance(discord_name_cleaned)
+    if response.content.isdigit() and int(response.content) <= originalBalance:
         wage = int(response.content)
         await message.channel.send("What stake do you want to do? (1) (0 - 10) **1x Multiplier** | (2) (0 - 50) **5x Multiplier** | (3) (0 - 100) **10x Multiplier**)")
         response = await client.wait_for('message', check=check, timeout=30)
