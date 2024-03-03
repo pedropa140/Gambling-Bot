@@ -157,6 +157,351 @@ async def blackjack(message : discord.message.Message, client: discord.Client, u
 async def roulette(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
         return m.author == message.author and m.channel == message.channel
+    roulette_numbers = {
+        "0": {"!color": "green", "!parity": "even", "!column": "NA", "!row": "NA", "!group": "NA", "!range": "NA"},
+        "00": {"!color": "green", "!parity": "even", "!column": "NA", "!row": "NA", "!group": "NA", "!range": "NA"},
+        "1": {"!color": "red", "!parity": "odd", "!column": "1st", "!row": "1st", "!group": "1st 12", "!range": "1 to 18"},
+        "2": {"!color": "black", "!parity": "even", "!column": "2nd", "!row": "1st", "!group": "1st 12", "!range": "1 to 18"},
+        "3": {"!color": "red", "!parity": "odd", "!column": "3rd", "!row": "1st", "!group": "1st 12", "!range": "1 to 18"},
+        "4": {"!color": "black", "!parity": "even", "!column": "1st", "!row": "2nd", "!group": "1st 12", "!range": "1 to 18"},
+        "5": {"!color": "red", "!parity": "odd", "!column": "2nd", "!row": "2nd", "!group": "1st 12", "!range": "1 to 18"},
+        "6": {"!color": "black", "!parity": "even", "!column": "3rd", "!row": "2nd", "!group": "1st 12", "!range": "1 to 18"},
+        "7": {"!color": "red", "!parity": "odd", "!column": "1st", "!row": "3rd", "!group": "1st 12", "!range": "1 to 18"},
+        "8": {"!color": "black", "!parity": "even", "!column": "2nd", "!row": "3rd", "!group": "1st 12", "!range": "1 to 18"},
+        "9": {"!color": "red", "!parity": "odd", "!column": "3rd", "!row": "3rd", "!group": "1st 12", "!range": "1 to 18"},
+        "10": {"!color": "black", "!parity": "even", "!column": "1st", "!row": "4th", "!group": "1st 12", "!range": "1 to 18"},
+        "11": {"!color": "black", "!parity": "odd", "!column": "2nd", "!row": "4th", "!group": "1st 12", "!range": "1 to 18"},
+        "12": {"!color": "red", "!parity": "even", "!column": "3rd", "!row": "4th", "!group": "1st 12", "!range": "1 to 18"},
+        "13": {"!color": "black", "!parity": "odd", "!column": "1st", "!row": "5th", "!group": "2nd 12", "!range": "1 to 18"},
+        "14": {"!color": "red", "!parity": "even", "!column": "2nd", "!row": "5th", "!group": "2nd 12", "!range": "1 to 18"},
+        "15": {"!color": "black", "!parity": "odd", "!column": "3rd", "!row": "5th", "!group": "2nd 12", "!range": "1 to 18"},
+        "16": {"!color": "red", "!parity": "even", "!column": "1st", "!row": "6th", "!group": "2nd 12", "!range": "1 to 18"},
+        "17": {"!color": "black", "!parity": "odd", "!column": "2nd", "!row": "6th", "!group": "2nd 12", "!range": "1 to 18"},
+        "18": {"!color": "red", "!parity": "even", "!column": "3rd", "!row": "6th", "!group": "2nd 12", "!range": "1 to 18"},
+        "19": {"!color": "red", "!parity": "odd", "!column": "1st", "!row": "7th", "!group": "2nd 12", "!range": "19 to 36"},
+        "20": {"!color": "black", "!parity": "even", "!column": "2nd", "!row": "7th", "!group": "2nd 12", "!range": "19 to 36"},
+        "21": {"!color": "red", "!parity": "odd", "!column": "3rd", "!row": "7th", "!group": "2nd 12", "!range": "19 to 36"},
+        "22": {"!color": "black", "!parity": "even", "!column": "1st", "!row": "8th", "!group": "2nd 12", "!range": "19 to 36"},
+        "23": {"!color": "red", "!parity": "odd", "!column": "2nd", "!row": "8th", "!group": "2nd 12", "!range": "19 to 36"},
+        "24": {"!color": "black", "!parity": "even", "!column": "3rd", "!row": "8th", "!group": "3rd 12", "!range": "19 to 36"},
+        "25": {"!color": "red", "!parity": "odd", "!column": "1st", "!row": "9th", "!group": "3rd 12", "!range": "19 to 36"},
+        "26": {"!color": "black", "!parity": "even", "!column": "2nd", "!row": "9th", "!group": "3rd 12", "!range": "19 to 36"},
+        "27": {"!color": "red", "!parity": "odd", "!column": "3rd", "!row": "9th", "!group": "3rd 12", "!range": "19 to 36"},
+        "28": {"!color": "black", "!parity": "even", "!column": "1st", "!row": "10th", "!group": "3rd 12", "!range": "19 to 36"},
+        "29": {"!color": "black", "!parity": "odd", "!column": "2nd", "!row": "10th", "!group": "3rd 12", "!range": "19 to 36"},
+        "30": {"!color": "red", "!parity": "even", "!column": "3rd", "!row": "10th", "!group": "3rd 12", "!range": "19 to 36"},
+        "31": {"!color": "black", "!parity": "odd", "!column": "1st", "!row": "11th", "!group": "3rd 12", "!range": "19 to 36"},
+        "32": {"!color": "red", "!parity": "even", "!column": "2nd", "!row": "11th", "!group": "3rd 12", "!range": "19 to 36"},
+        "33": {"!color": "black", "!parity": "odd", "!column": "3rd", "!row": "11th", "!group": "3rd 12", "!range": "19 to 36"},
+        "34": {"!color": "red", "!parity": "even", "!column": "1st", "!row": "12th", "!group": "3rd 12", "!range": "19 to 36"},
+        "35": {"!color": "black", "!parity": "odd", "!column": "2nd", "!row": "12th", "!group": "3rd 12", "!range": "19 to 36"},
+        "36": {"!color": "red", "!parity": "even", "!column": "3rd", "!row": "12th", "!group": "3rd 12", "!range": "19 to 36"}
+    }
+
+    con = True
+    total_bet = 0
+    discord_name = message.author.mention
+    discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
+    originalBlanace = user_db.get_balance(discord_name_cleaned)
+    bet_list = []
+    error = False
+    while con and not error:        
+        wage = 0
+        await message.channel.send(f'''
+        Where do you want to wager?
+        !number - bet on a number
+        !color - bet on red or black
+        !parity - bet on even or odd
+        !column - to bet on what column the number is. i.e., number 24 is on row 3
+        !row - to bet on what row the number is. i.e., number 24 is on row 8
+        !group - to bet either on 1-12 or 13-24 or 25-36
+        !range - to bet on a number from 1-18 or 19-36
+        !endbets - to complete betting wagers
+        ''')
+        response_where = await client.wait_for('message', check=check, timeout=30)
+        response_where_content = response_where.content
+        if response_where_content == '!number':
+            await message.channel.send("What number do you want to wager on?")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            number = ''
+            if response_event.content.isdigit():
+                number = int(response_event.content)
+                if number < -1 and number > 37:
+                    await message.channel.send("[ERROR]: Number has to be between 0 - 36. Program Terminated. Please Try Again.")
+                    error = True
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f"How much are you wagering for {number}?")
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    single_payout  = 35
+                    bet = (response_where_content, number, wage, single_payout)
+                    bet_list.append(bet)
+        elif response_where_content == '!color':
+            await message.channel.send("What color do you want to wager on? (red | black)")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            color = ''
+            if response_event.content == 'red':
+                color = 'red'
+            elif response_event.content == 'black':
+                color = 'black'
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f"How much are you wagering for {color}?")
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    color_payout  = 1
+                    bet = (response_where_content, color, wage, color_payout)
+                    bet_list.append(bet)                    
+        elif response_where_content == '!parity':
+            await message.channel.send("What parity do you want to wager on? (even | odd)")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            parity = ''
+            if response_event.content == 'odd':
+                parity = 'odd'
+            elif response_event.content == 'even':
+                parity = 'even'
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f"How much are you wagering for {parity}?")
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    even_payout = 1
+                    bet = (response_where_content, parity, wage, even_payout)
+                    bet_list.append(bet)
+        elif response_where_content == '!column':
+            await message.channel.send("What column do you want to wager on? (1st | 2nd | 3rd)")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            column = ''
+            if response_event.content == '1st':
+                column = '1st'
+            elif response_event.content == '2nd':
+                column = '2nd'
+            elif response_event.content == '3rd':
+                column = '3rd'
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f'How much are you wagering for {column} column?')
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    column_payout = 2
+                    bet = (response_where_content, column, wage, column_payout)
+                    bet_list.append(bet)
+        elif response_where_content == '!row':
+            await message.channel.send("What row do you want to wager on? (1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th | 11th | 12th)")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            row = ''
+            if response_event.content == '1st':
+                row = '1st'
+            elif response_event.content == '2nd':
+                row = '2nd'
+            elif response_event.content == '3rd':
+                row = '3rd'
+            elif response_event.content == '4th':
+                row = '4th'
+            elif response_event.content == '5th':
+                row = '5th'
+            elif response_event.content == '6th':
+                row = '6th'
+            elif response_event.content == '7th':
+                row = '7th'
+            elif response_event.content == '8th':
+                row = '8th'
+            elif response_event.content == '9th':
+                row = '9th'
+            elif response_event.content == '10th':
+                row = '10th'
+            elif response_event.content == '11th':
+                row = '11th'
+            elif response_event.content == '12th':
+                row = '12th'
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f'How much are you wagering for {row} column?')
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    street_payout  = 11
+                    bet = (response_where_content, row, wage, street_payout)
+                    bet_list.append(bet)
+        elif response_where_content == '!group':
+            await message.channel.send("What group do you want to wager on? (1st 12 | 2nd 12 | 3rd 12)")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            group = ''
+            if response_event.content == '1st 12':
+                group = '1st 12'
+            elif response_event.content == '2nd 12':
+                group = '2nd 12'
+            elif response_event.content == '3rd 12':
+                group = '3rd 12'
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f"How much are you wagering for {group}?")
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    group_payout  = 2
+                    bet = (response_where_content, group, wage, group_payout)
+                    bet_list.append(bet)
+        elif response_where_content == '!range':
+            await message.channel.send("What range do you want to wager on? (1 to 18 | 19 to 36)")
+            response_event = await client.wait_for('message', check=check, timeout=30)
+            range_bet = ''
+            if response_event.content == '1 to 18':
+                range_bet = '1 to 18'
+            elif response_event.content == '19 to 36':
+                range_bet = '19 to 36'
+            else:
+                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                error = True
+            await message.channel.send(f"How much are you wagering for {range_bet}?")
+            response_wage = await client.wait_for('message', check=check, timeout=30)
+            if response_wage.content.isdigit():
+                wage += int(response_wage.content)
+                if wage + total_bet > originalBlanace:
+                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    error = True
+                else:
+                    total_bet += wage
+                    range_payout = 1
+                    bet = (response_where_content, range_bet, wage, range_payout)
+                    bet_list.append(bet)
+        elif response_where_content == '!endbets':
+            con = False
+            await message.channel.send("No more bets.")
+        else:
+            con = False
+            await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+            error = True
+        bet_list = list(set(bet_list))
+        
+    def get_payout(bet):
+        return bet[3]
+    sorted_bets = sorted(bet_list, key=get_payout, reverse=True)
+    print(sorted_bets)
+    if error == False:
+        spinned_number = random.choice(list(roulette_numbers))
+        color = roulette_numbers[spinned_number]["!color"]
+        parity = roulette_numbers[spinned_number]["!parity"]
+        column = roulette_numbers[spinned_number]["!column"]
+        row = roulette_numbers[spinned_number]["!row"]
+        group = roulette_numbers[spinned_number]["!group"]
+        number_range = roulette_numbers[spinned_number]["!range"]
+        found = False
+        total = 0
+        for bet in sorted_bets:
+            command = bet[0]
+            if command == '!number':
+                if spinned_number == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]
+            elif command == '!row':
+                if color == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]            
+            elif command == '!column':
+                if color == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]
+                    
+            elif command == '!group':
+                if color == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]
+                      
+            elif command == '!color':
+                if color == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]
+            elif command == '!range':
+                if color == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]
+            elif command == '!parity':
+                if color == bet[1]:
+                    total += bet[2] * bet[3]
+                    user_db.update_total_earnings(discord_name_cleaned, total)
+                    continue
+                else:
+                    total -= bet[2]
+        if total > -1:
+            user_db.update_balance(discord_name_cleaned, total)
+            current_date = str(datetime.datetime.now().date())
+            current_time = str(datetime.datetime.now().time())
+            date = f'{current_date}T{current_time}'
+            activity = f'{date} - Won ${total} playing roulette on {current_date}'
+            user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
+            user_db.update_last_activity(discord_name_cleaned, activity)
+            await message.channel.send(f'{discord_name} won ${total} playing roulette.')
+        else:
+            user_db.update_balance(discord_name_cleaned, total)
+            current_date = str(datetime.datetime.now().date())
+            current_time = str(datetime.datetime.now().time())
+            date = f'{current_date}T{current_time}'
+            activity = f'{date} - Lost ${abs(total)} playing roulette on {current_date}'
+            user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
+            user_db.update_last_activity(discord_name_cleaned, activity)
+            await message.channel.send(f'{discord_name} lost ${abs(total)} playing roulette.')
+    else:
+        print("errors")
 
 # SLOT MACHINE
 async def slots(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
@@ -172,7 +517,6 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
         wage = int(response.content)
         con = True
         grid = [[random.choice(['Cherry', 'Bell', 'Bar', 'Lemon', 'Orange', 'Star', 'Apple']) for _ in range(3)] for _ in range(3)]
-        # result_grid = [' | '.join(row) + '\n' + '-' * 11 for row in grid]
         result_grid = []
         result_grid.append(('-' * 11) + '\n')
         for row in grid:
