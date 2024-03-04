@@ -96,10 +96,64 @@ Follow these steps to run the Discord application and add it to your server.
         
 <div align=center>   
   
-## How the bot
+## How to run the Gambling-Bot
 
+In a terminal, find the directory where main.py is located and run this command:
 </div>
 
   ```bash
   python main.py
-  ```  
+  ```
+
+### Options:
+
+  - **@Gambling-Bot !hello**
+    - returns a welcoming message back to the user.
+  - **@gambling-Bot !coin**
+    - returns either heads or tails back to the user.
+  - **@Gambling-Bot !roll_dice**
+    - prompts the user on how many sides is the dice and returns a random number back to the user.
+  - **@Gambling-Bot !gambling**
+    - prompts the user if they are a new user or a returning user
+      - **yes**
+        - checks if the user is already in the database
+        - if not it prompts the user if they want to be in the database
+        - if yes, we gather information from the user using their Discord name.
+        - **!create**
+          - creates the user into the database.
+          - **!game**
+            - redirects you to the gambling game page.
+            - **!dice**
+              - players roll a two sided die that generates a random-number from 1 to 6. Players earn money if the sum of the two dies are greater than the dealer's roll.
+            - **!coinflip**
+              - asks user on if the coin will flip on heads or tails. Players will earn money they guess correctly.
+            - **!blackjack**
+              - card game where players try to get a hand total as close to 21 as possible without going over, while beating the dealer's hand.
+            - **!roulette**
+              - casino game where players bet on which numbered compartment a small ball will land in after a spinning wheel comes to a stop.
+            - **!slots**
+              - casino games where players spin reels containing various symbols, aiming to align them in winning combinations to earn payouts.
+            - **!guess**
+              - players guess what the generated number will be according to a specific range. The larger the range the bigger the payout.
+            - **!exit**
+              - exits the gambling page.
+          - **!userinfo**
+            - returns the Discord user's info.
+          - **!balance**
+            - returns the user balance and how much money they have.
+          - **!addmoney**
+            - adds money to the user's balance.
+          - **!leaderboard**
+            - shows the list of players with the highest amount of total earnings.
+          - **!history**
+            - shows the **5** most recent activities the user has done.
+          - **!delete**
+            - deletes the user from the database.
+          - **!exit**
+            - exits the gambling page.
+        - **!exit**
+          - does not create a user for the gambling database.
+      - **no**
+        - prompts the user if they want to create an account.
+        - if yes, it would do the same thing as **!create**
+        - if no, then it does not create a user for the database.
