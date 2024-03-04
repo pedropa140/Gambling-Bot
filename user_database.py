@@ -84,8 +84,8 @@ class UserDatabase:
             return {
                 "Discord Name": user_info[0],
                 "Name": user_info[1],
-                "Balance": user_info[2],
-                "Total Earnings": user_info[3],
+                "Balance": '$' + str(user_info[2]),
+                "Total Earnings": '$' + str(user_info[3]),
                 "Level": user_info[4],
                 "Last Activity": user_info[5],
                 "Date Created": user_info[6]

@@ -35,28 +35,71 @@ async def entrance(message : discord.message.Message, client : discord.client, u
         elif content == '!guess':
             await guess(response, client, user_db)
         elif content == '!exit':
-            await message.channel.send(f'{response.author.mention} has exited.')
+            # await message.channel.send(f'{response.author.mention} has exited.')
+            exit_string = f'{response.author.mention} has exited.'
+            exit_embed = discord.Embed(description=exit_string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            exit_embed.set_thumbnail(url='attachment://icon.png')
+            exit_embed.set_author(name="Gambling-Bot says:")
+            exit_embed.set_footer(text="!exit")
+            await message.channel.send(file=file, embed=exit_embed)
             con = False
         else:
-            await message.channel.send(f'[ERROR]: Invalid Response. Program Terminated. Please Try Again.')
+            # await message.channel.send(f'[ERROR]: Invalid Response. Program Terminated. Please Try Again.')
+            string = f'[ERROR]: Invalid Response. Program Terminated. Please Try Again.'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!game")
+            await message.channel.send(file=file, embed=embed)
             con = False
 
 async def gambling_menu(message : discord.message.Message):
-    await message.channel.send(f'''Please choose a game:
-    **!dice** - Players roll a six-sided die to generate a random number. Wagers double if they get a higher number than the dealer.
-    **!coinflip** - Players will guess where the coin will land. Wagers double if they guess the correct 
-    **!blackjack** - Players aim to get as close to 21 as possible without going over, competing against a dealer.
-    **!roulette** - Players bet on where a ball will land on a spinning wheel, with various betting options available.
-    **!slots** - Players spin reels to match symbols and win credits or bonuses.
-    **!guess** - Players try to guess a number within a specified range, receiving hints if needed, until they guess correctly.
-    **!exit** - Exits gambling page.
-    ''')
+    # await message.channel.send(f'''Please choose a game:
+    # **!dice** - Players roll a six-sided die to generate a random number. Wagers double if they get a higher number than the dealer.
+    # **!coinflip** - Players will guess where the coin will land. Wagers double if they guess the correct 
+    # **!blackjack** - Players aim to get as close to 21 as possible without going over, competing against a dealer.
+    # **!roulette** - Players bet on where a ball will land on a spinning wheel, with various betting options available.
+    # **!slots** - Players spin reels to match symbols and win credits or bonuses.
+    # **!guess** - Players try to guess a number within a specified range, receiving hints if needed, until they guess correctly.
+    # **!exit** - Exits gambling page.
+    # ''')
+    menu_title = 'Please choose a game:'
+    # menu_string = f'''**!dice** - Players roll a six-sided die to generate a random number. Wagers double if they get a higher number than the dealer.
+    # **!coinflip** - Players will guess where the coin will land. Wagers double if they guess the correct 
+    # **!blackjack** - Players aim to get as close to 21 as possible without going over, competing against a dealer.
+    # **!roulette** - Players bet on where a ball will land on a spinning wheel, with various betting options available.
+    # **!slots** - Players spin reels to match symbols and win credits or bonuses.
+    # **!guess** - Players try to guess a number within a specified range, receiving hints if needed, until they guess correctly.
+    # **!exit** - Exits gambling page.
+    # '''
+    embed = discord.Embed(title=menu_title, description= '\n', color=0x50C878)
+    file = discord.File('images/icon.png', filename='icon.png')
+    embed.set_thumbnail(url='attachment://icon.png')
+    embed.set_author(name="Gambling-Bot says:")
+    embed.add_field(name="**!dice**", value="Players roll a six-sided die to generate a random number. Wagers double if they get a higher number than the dealer.", inline= False)
+    embed.add_field(name="**!coinflip**", value="Players will guess where the coin will land. Wagers double if they guess the correct ", inline= False)
+    embed.add_field(name="**!blackjack**", value="Players aim to get as close to 21 as possible without going over, competing against a dealer.", inline= False)
+    embed.add_field(name="**!roulette**", value="Players bet on where a ball will land on a spinning wheel, with various betting options available.", inline= False)
+    embed.add_field(name="**!slots**", value="Players spin reels to match symbols and win credits or bonuses.", inline= False)
+    embed.add_field(name="**!guess**", value="Players try to guess a number within a specified range, receiving hints if needed, until they guess correctly.", inline= False)
+    embed.add_field(name="**!exit**", value="Exits gambling page.", inline= False)
+    embed.set_footer(text="!game")
+    await message.channel.send(file=file, embed=embed)
 
 # DICE
 async def dice(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
         return m.author == message.author and m.channel == message.channel
-    await message.channel.send("How much are you wagering?")
+    # await message.channel.send("How much are you wagering?")
+    string = f"How much are you wagering?"
+    embed = discord.Embed(title=string, color=0x50C878)
+    file = discord.File('images/icon.png', filename='icon.png')
+    embed.set_thumbnail(url='attachment://icon.png')
+    embed.set_author(name="Gambling-Bot says:")
+    embed.set_footer(text="!dice")
+    await message.channel.send(file=file, embed=embed)
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
@@ -79,7 +122,14 @@ async def dice(message : discord.message.Message, client: discord.Client, user_d
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
                 user_db.update_total_earnings(discord_name_cleaned, wage)
-                await message.channel.send(f'{discord_name} won ${wage} defeating the dealer {user_total} to {dealer_total}')
+                # await message.channel.send(f'{discord_name} won ${wage} defeating the dealer {user_total} to {dealer_total}')
+                string = f'{discord_name} won ${wage} defeating the dealer {user_total} to {dealer_total}'
+                embed = discord.Embed(description=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!dice")
+                await message.channel.send(file=file, embed=embed)
             elif user_total < dealer_total:
                 user_db.update_balance(discord_name_cleaned, -wage)
                 current_date = str(datetime.datetime.now().date())
@@ -88,8 +138,14 @@ async def dice(message : discord.message.Message, client: discord.Client, user_d
                 activity = f'{date} - Lost ${wage} playing dice on {current_date}'
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
-                await message.channel.send(f'{discord_name} lost ${wage} losing the dealer {user_total} to {dealer_total}')
-            # if tied
+                # await message.channel.send(f'{discord_name} lost ${wage} losing the dealer {user_total} to {dealer_total}')
+                string = f'{discord_name} lost ${wage} losing the dealer {user_total} to {dealer_total}'
+                embed = discord.Embed(description=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!dice")
+                await message.channel.send(file=file, embed=embed)
             elif user_total == dealer_total:
                 # do not change any money
                 # update transactions and change latest history
@@ -99,28 +155,65 @@ async def dice(message : discord.message.Message, client: discord.Client, user_d
                 activity = f'{date} - Drew ${wage} playing dice on {current_date}'
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
-                await message.channel.send(f'{discord_name} drew the dealer {user_total} to {dealer_total}')
+                # await message.channel.send(f'{discord_name} drew the dealer {user_total} to {dealer_total}')
+                string = f'{discord_name} drew the dealer {user_total} to {dealer_total}'
+                embed = discord.Embed(description=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!dice")
+                await message.channel.send(file=file, embed=embed)
             
         else:
-            await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+            # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+            string = f'[ERROR]: Invalid Input. Program Terminated. Please Try Again.'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!dice")
+            await message.channel.send(file=file, embed=embed)
+    else:
+        # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+        string = f'[ERROR]: Wager is larger than current balance. Program Terminated. Please Try Again.'
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!dice")
+        await message.channel.send(file=file, embed=embed)
 
 # COIN FLIP
 async def coinflip(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
         return m.author == message.author and m.channel == message.channel
-    await message.channel.send("How much are you wagering?")
+    # await message.channel.send("How much are you wagering?")
+    string = f"How much are you wagering?"
+    embed = discord.Embed(title=string, color=0x50C878)
+    file = discord.File('images/icon.png', filename='icon.png')
+    embed.set_thumbnail(url='attachment://icon.png')
+    embed.set_author(name="Gambling-Bot says:")
+    embed.set_footer(text="!coinflip")    
+    await message.channel.send(file=file, embed=embed)
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
     originalBalance = user_db.get_balance(discord_name_cleaned)
     if response.content.isdigit() and int(response.content) <= originalBalance:
         wage = int(response.content)
-        await message.channel.send("What is your prediction? (heads | tails)")
+        # await message.channel.send("What is your prediction? (heads | tails)")
+        string = "What is your prediction? (heads | tails)"
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!coinflip")
+        await message.channel.send(file=file, embed=embed)
         coin = ['heads', 'tails']
         prediction = random.randint(0, 1)
         result = coin[prediction]
         response = await client.wait_for('message', check=check, timeout=30)
-        if response.content.lower() == result:
+        if response.content.lower() == result and response.content.lower() in coin:
             user_db.update_balance(discord_name_cleaned, wage)
             current_date = str(datetime.datetime.now().date())
             current_time = str(datetime.datetime.now().time())
@@ -129,8 +222,15 @@ async def coinflip(message : discord.message.Message, client: discord.Client, us
             user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
             user_db.update_last_activity(discord_name_cleaned, activity)
             user_db.update_total_earnings(discord_name_cleaned, wage)
-            await message.channel.send(f'{discord_name} won ${wage} guessing {result} in coins')
-        elif response.content.lower() != result:
+            # await message.channel.send(f'{discord_name} won ${wage} guessing {result} in coins')
+            string = f'{discord_name} won ${wage} guessing {result} in coins'
+            embed = discord.Embed(description=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!coinflip")
+            await message.channel.send(file=file, embed=embed)
+        elif response.content.lower() != result and response.content.lower() in coin:
             user_db.update_balance(discord_name_cleaned, -wage)
             current_date = str(datetime.datetime.now().date())
             current_time = str(datetime.datetime.now().time())
@@ -138,22 +238,55 @@ async def coinflip(message : discord.message.Message, client: discord.Client, us
             activity = f'{date} - Lost ${wage} playing coin flip on {current_date}'
             user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
             user_db.update_last_activity(discord_name_cleaned, activity)
-            await message.channel.send(f'{discord_name} lost ${wage} guessing {result} in coins')
+            # await message.channel.send(f'{discord_name} lost ${wage} guessing {result} in coins')
+            string = f'{discord_name} lost ${wage} guessing {result} in coins'
+            embed = discord.Embed(description=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!coinflip")
+            await message.channel.send(file=file, embed=embed)
         else:
-            await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+            # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+            string = f'[ERROR]: Invalid Input. Program Terminated. Please Try Again.'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!coinfip")
+            await message.channel.send(file=file, embed=embed)
+    else:
+        string = f'[ERROR]: Wager is larger than current balance. Program Terminated. Please Try Again.'
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!coinfip")
+        await message.channel.send(file=file, embed=embed)
 
 # BLACKJACK
 async def blackjack(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
         return m.author == message.author and m.channel == message.channel
-    # create cards
-    # when getting a new card also add it to the list to insert to the back of the deck
-    # double deck maybe?
-    await message.channel.send("Enter number of decks to use (1, 2, 6, or 8): ")
+    # await message.channel.send("Enter number of decks to use (1, 2, 6, or 8): ")
+    string = "Enter number of decks to use (1, 2, 6, or 8): "
+    embed = discord.Embed(title=string, color=0x50C878)
+    file = discord.File('images/icon.png', filename='icon.png')
+    embed.set_thumbnail(url='attachment://icon.png')
+    embed.set_author(name="Gambling-Bot says:")
+    embed.set_footer(text="!blackjack")
+    await message.channel.send(file=file, embed=embed)
     num_decks = await client.wait_for('message', check=check, timeout=30)
     num_decks_number = int(num_decks.content)
     if num_decks_number not in [1, 2, 6, 8]:
-        await message.channel.send("Invalid number of decks. Please choose 1, 2, 6, or 8.")
+        # await message.channel.send("Invalid number of decks. Please choose 1, 2, 6, or 8.")
+        string = "Invalid number of decks. Please choose 1, 2, 6, or 8."
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!blackjack")
+        await message.channel.send(file=file, embed=embed)
         return
     deck = Deck(num_decks_number)
     con = True
@@ -162,8 +295,36 @@ async def blackjack(message : discord.message.Message, client: discord.Client, u
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
     originalBalance = user_db.get_balance(discord_name_cleaned)
     newBalance = user_db.get_balance(discord_name_cleaned)
+    wage = 0
     while con:
-        await message.channel.send("How much are you wagering?")
+        # await message.channel.send("How much are you wagering?")
+        string = f"Pick an option:"
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.add_field(name="!exit", value='Exits blackjack page.')
+        embed.add_field(name='!continue', value='Continues blackjack game.')
+        embed.set_footer(text="!blackjack")    
+        await message.channel.send(file=file, embed=embed)
+        response = await client.wait_for('message', check=check, timeout=30)
+        if response.content == '!exit':
+            # await message.channel.send(f'{response.author.mention} has exited.')
+            exit_string = f'{response.author.mention} has exited.'
+            exit_embed = discord.Embed(description=exit_string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            exit_embed.set_thumbnail(url='attachment://icon.png')
+            exit_embed.set_author(name="Gambling-Bot says:")
+            exit_embed.set_footer(text="!exit")
+            await message.channel.send(file=file, embed=exit_embed)
+            break
+        string = f"How much are you wagering?"
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!blackjack")    
+        await message.channel.send(file=file, embed=embed)
         response = await client.wait_for('message', check=check, timeout=30)
         if response.content.isdigit() and int(response.content) <= newBalance:
             wage = int(response.content)
@@ -176,51 +337,112 @@ async def blackjack(message : discord.message.Message, client: discord.Client, u
 
             dealer_hand.add_card(deck.deal_card())
             dealer_hand.add_card(deck.deal_card())
-            await message.channel.send(f'''Dealer's Hand
-            One Card Faced Down
-            {dealer_hand.cards[1]}
-            Your Hand:
-            {player_hand}
-            ''')
+            # await message.channel.send(f'''Dealer's Hand
+            # One Card Faced Down
+            # {dealer_hand.cards[1]}
+            # Your Hand:
+            # {player_hand}
+            # ''')
+            string = f'''Dealer's Hand\nOne Card Faced Down\n{dealer_hand.cards[1]}\n\nYour Hand:\n{player_hand}'''
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!blackjack")    
+            await message.channel.send(file=file, embed=embed)
             while player_hand.value < 21:
-                await message.channel.send("Do you want to (h)it or (s)tand? ")
+                # await message.channel.send("Do you want to (h)it or (s)tand? ")
+                string = 'Do you want to:'
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.add_field(name="**hit**", inline=False)
+                embed.add_field(name="**stand**", inline=False)
+                embed.set_footer(text="!blackjack")    
+                await message.channel.send(file=file, embed=embed)
                 action = await client.wait_for('message', check=check, timeout=30)
                 action_event = action.content
-                if action_event == 'h':
+                if action_event == 'hit':
                     player_hand.add_card(deck.deal_card())
-                    await message.channel.send("\nYour Hand:")
-                    await message.channel.send(player_hand)
-                elif action_event == 's':
+                    # await message.channel.send("\nYour Hand:")
+                    # await message.channel.send(player_hand)
+                    string = 'Your Hand:\n {player_hand}'
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!blackjack")    
+                    await message.channel.send(file=file, embed=embed)
+                elif action_event == 'stand':
                     break
 
             if player_hand.value > 21:
-                await message.channel.send("You bust! Dealer wins.")
+                # await message.channel.send("You bust! Dealer wins.")
+                embed = discord.Embed(title="You bust! Dealer wins.", color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!blackjack")    
+                await message.channel.send(file=file, embed=embed)
                 deck.add_used_cards(player_hand.cards + dealer_hand.cards)
                 continue
 
-            await message.channel.send(f'''Dealer's Hand:
-            {dealer_hand}
-            ''')
+            # await message.channel.send(f'''Dealer's Hand:
+            # {dealer_hand}
+            # ''')
+            string = f'''Dealer's Hand:\n{dealer_hand}'''
+            embed = discord.Embed(description= string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!blackjack")    
+            await message.channel.send(file=file, embed=embed)
+            deck.add_used_cards(player_hand.cards + dealer_hand.cards)
             while dealer_hand.value < 17:
                 dealer_hand.add_card(deck.deal_card())
                 await message.channel.send(dealer_hand)
 
             if dealer_hand.value > 21 or dealer_hand.value < player_hand.value:
-                await message.channel.send("You win!")
+                # await message.channel.send("You win!")
+                embed = discord.Embed(title= "You win!", color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!blackjack")    
+                await message.channel.send(file=file, embed=embed)
                 user_db.update_total_earnings(discord_name_cleaned, wage)
                 newBalance += wage
             elif dealer_hand.value == player_hand.value:
-                await message.channel.send("It's a tie!")
+                # await message.channel.send("It's a tie!")
+                embed = discord.Embed(title= "It's a tie!", color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!blackjack")    
+                await message.channel.send(file=file, embed=embed)
             else:
-                await message.channel.send("Dealer wins.")
+                # await message.channel.send("Dealer wins.")
+                embed = discord.Embed(title= "Dealer wins.", color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!blackjack")    
+                await message.channel.send(file=file, embed=embed)
                 newBalance -= wage
         else:
-            await message.channel.send("[ERROR]: Wager over current balance. Program Terminated. Please Try Again.")
+            # await message.channel.send("[ERROR]: Wager over current balance. Program Terminated. Please Try Again.")
+            embed = discord.Embed(title= "[ERROR]: Wager over current balance. Program Terminated. Please Try Again.", color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!blackjack")    
+            await message.channel.send(file=file, embed=embed)
             con = False
         
         deck.add_used_cards(player_hand.cards + dealer_hand.cards)
     difference = newBalance - originalBalance
-    if difference >= originalBalance:
+    if difference >= originalBalance and wage != 0:
         user_db.update_balance(discord_name_cleaned, wage)
         current_date = str(datetime.datetime.now().date())
         current_time = str(datetime.datetime.now().time())
@@ -228,7 +450,14 @@ async def blackjack(message : discord.message.Message, client: discord.Client, u
         activity = f'{date} - Won ${wage} playing blackjack on {current_date}'
         user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
         user_db.update_last_activity(discord_name_cleaned, activity)
-        await message.channel.send(f'{discord_name} won ${difference} in blackjack')
+        # await message.channel.send(f'{discord_name} won ${difference} in blackjack')
+        string = f'{discord_name} won ${difference} in blackjack'
+        embed = discord.Embed(description=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!blackjack")    
+        await message.channel.send(file=file, embed=embed)
     else:
         user_db.update_balance(discord_name_cleaned, -wage)
         current_date = str(datetime.datetime.now().date())
@@ -237,7 +466,14 @@ async def blackjack(message : discord.message.Message, client: discord.Client, u
         activity = f'{date} - Lost ${wage} playing blackjack on {current_date}'
         user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
         user_db.update_last_activity(discord_name_cleaned, activity)
-        await message.channel.send(f'{discord_name} lost ${difference} in blackjack')
+        # await message.channel.send(f'{discord_name} lost ${difference} in blackjack')
+        string = f'{discord_name} lost ${difference} in blackjack'
+        embed = discord.Embed(description=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!blackjack")    
+        await message.channel.send(file=file, embed=embed)
 
 # ROULETTE
 async def roulette(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
@@ -293,37 +529,87 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
     error = False
     while con and not error:        
         wage = 0
-        await message.channel.send(f'''
-        Where do you want to wager?
-        !number - bet on a number
-        !color - bet on red or black
-        !parity - bet on even or odd
-        !column - to bet on what column the number is. i.e., number 24 is on row 3
-        !row - to bet on what row the number is. i.e., number 24 is on row 8
-        !group - to bet either on 1-12 or 13-24 or 25-36
-        !range - to bet on a number from 1-18 or 19-36
-        !endbets - to complete betting wagers
-        ''')
+        # await message.channel.send(f'''
+        # Where do you want to wager?
+        # !number - bet on a number
+        # !color - bet on red or black
+        # !parity - bet on even or odd
+        # !column - to bet on what column the number is. i.e., number 24 is on row 3
+        # !row - to bet on what row the number is. i.e., number 24 is on row 8
+        # !group - to bet either on 1-12 or 13-24 or 25-36
+        # !range - to bet on a number from 1-18 or 19-36
+        # !endbets - to complete betting wagers
+        # ''')
+        string = "Where do you want to wager?"
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.add_field(name="!number", value="bet on a number", inline=False)
+        embed.add_field(name="!color", value="bet on red or black", inline=False)
+        embed.add_field(name="!parity", value="bet on even or odd", inline=False)
+        embed.add_field(name="!column", value="to bet on what column the number is. i.e., number 24 is on row 3", inline=False)
+        embed.add_field(name="!row", value="to bet on what row the number is. i.e., number 24 is on row 8", inline=False)
+        embed.add_field(name="!group", value="to bet either on 1-12 or 13-24 or 25-36", inline=False)
+        embed.add_field(name="!range", value="to bet on a number from 1-18 or 19-36", inline=False)
+        embed.add_field(name="!endbets", value="to complete betting wagers", inline=False)
+        embed.set_footer(text="!roulette")    
+        await message.channel.send(file=file, embed=embed)
         response_where = await client.wait_for('message', check=check, timeout=30)
         response_where_content = response_where.content
         if response_where_content == '!number':
-            await message.channel.send("What number do you want to wager on?")
+            # await message.channel.send("What number do you want to wager on?")
+            string = "What number do you want to wager on?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             number = ''
             if response_event.content.isdigit():
                 number = int(response_event.content)
                 if number < -1 and number > 37:
-                    await message.channel.send("[ERROR]: Number has to be between 0 - 36. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Number has to be between 0 - 36. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Number has to be between 0 - 36. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Inavlid Input. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f"How much are you wagering for {number}?")
+            # await message.channel.send(f"How much are you wagering for {number}?")
+            string = f"How much are you wagering for {number}?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -331,7 +617,16 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet = (response_where_content, number, wage, single_payout)
                     bet_list.append(bet)
         elif response_where_content == '!color':
-            await message.channel.send("What color do you want to wager on? (red | black)")
+            # await message.channel.send("What color do you want to wager on? (red | black)")
+            string = "What color do you want to wager on? (red | black)"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.add_field(name="red", value="", inline=False)
+            embed.add_field(name="black", value="", inline=False)
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             color = ''
             if response_event.content == 'red':
@@ -339,14 +634,35 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             elif response_event.content == 'black':
                 color = 'black'
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Inavlid Input. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f"How much are you wagering for {color}?")
+            # await message.channel.send(f"How much are you wagering for {color}?")
+            string = f"How much are you wagering for {color}?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -354,7 +670,16 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet = (response_where_content, color, wage, color_payout)
                     bet_list.append(bet)                    
         elif response_where_content == '!parity':
-            await message.channel.send("What parity do you want to wager on? (even | odd)")
+            # await message.channel.send("What parity do you want to wager on? (even | odd)")
+            string = "What parity do you want to wager on? (even | odd)"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.add_field(name="even", value="", inline=False)
+            embed.add_field(name="odd", value="", inline=False)
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             parity = ''
             if response_event.content == 'odd':
@@ -362,14 +687,35 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             elif response_event.content == 'even':
                 parity = 'even'
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Inavlid Input. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f"How much are you wagering for {parity}?")
+            # await message.channel.send(f"How much are you wagering for {parity}?")
+            string = f"How much are you wagering for {parity}?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -377,7 +723,17 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet = (response_where_content, parity, wage, even_payout)
                     bet_list.append(bet)
         elif response_where_content == '!column':
-            await message.channel.send("What column do you want to wager on? (1st | 2nd | 3rd)")
+            # await message.channel.send("What column do you want to wager on? (1st | 2nd | 3rd)")
+            string = "What column do you want to wager on?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.add_field(name="1st", value="", inline=False)
+            embed.add_field(name="2nd", value="", inline=False)
+            embed.add_field(name="3rd", value="", inline=False)
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             column = ''
             if response_event.content == '1st':
@@ -387,14 +743,35 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             elif response_event.content == '3rd':
                 column = '3rd'
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Inavlid Input. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f'How much are you wagering for {column} column?')
+            # await message.channel.send(f'How much are you wagering for {column} column?')
+            string = f'How much are you wagering for {column} column?'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -402,7 +779,26 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet = (response_where_content, column, wage, column_payout)
                     bet_list.append(bet)
         elif response_where_content == '!row':
-            await message.channel.send("What row do you want to wager on? (1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th | 11th | 12th)")
+            # await message.channel.send("What row do you want to wager on? (1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th | 11th | 12th)")
+            string = "What row do you want to wager on?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.add_field(name="1st", value="", inline=False)
+            embed.add_field(name="2nd", value="", inline=False)
+            embed.add_field(name="3rd", value="", inline=False)
+            embed.add_field(name="4th", value="", inline=False)
+            embed.add_field(name="5th", value="", inline=False)
+            embed.add_field(name="6th", value="", inline=False)
+            embed.add_field(name="7th", value="", inline=False)
+            embed.add_field(name="8th", value="", inline=False)
+            embed.add_field(name="9th", value="", inline=False)
+            embed.add_field(name="10th", value="", inline=False)
+            embed.add_field(name="11th", value="", inline=False)
+            embed.add_field(name="12th", value="", inline=False)
+            embed.set_footer(text="!blackjack")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             row = ''
             if response_event.content == '1st':
@@ -430,14 +826,35 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             elif response_event.content == '12th':
                 row = '12th'
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f'How much are you wagering for {row} column?')
+            # await message.channel.send(f'How much are you wagering for {row} column?')
+            string = f'How much are you wagering for {row} column?'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -445,7 +862,17 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet = (response_where_content, row, wage, street_payout)
                     bet_list.append(bet)
         elif response_where_content == '!group':
-            await message.channel.send("What group do you want to wager on? (1st 12 | 2nd 12 | 3rd 12)")
+            # await message.channel.send("What group do you want to wager on? (1st 12 | 2nd 12 | 3rd 12)")
+            string = "What group do you want to wager on? (1st 12 | 2nd 12 | 3rd 12)"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.add_field(name="1st 12", value="", inline=False)
+            embed.add_field(name="2nd 12", value="", inline=False)
+            embed.add_field(name="3rd 12", value="", inline=False)
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             group = ''
             if response_event.content == '1st 12':
@@ -455,14 +882,35 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             elif response_event.content == '3rd 12':
                 group = '3rd 12'
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Inavlid Input. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f"How much are you wagering for {group}?")
+            # await message.channel.send(f"How much are you wagering for {group}?")
+            string = f"How much are you wagering for {group}?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -470,7 +918,16 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet = (response_where_content, group, wage, group_payout)
                     bet_list.append(bet)
         elif response_where_content == '!range':
-            await message.channel.send("What range do you want to wager on? (1 to 18 | 19 to 36)")
+            # await message.channel.send("What range do you want to wager on? (1 to 18 | 19 to 36)")
+            string = "What range do you want to wager on? (1 to 18 | 19 to 36)"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.add_field(name="1 to 18", value="", inline=False)
+            embed.add_field(name="19 to 36", value="", inline=False)
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             response_event = await client.wait_for('message', check=check, timeout=30)
             range_bet = ''
             if response_event.content == '1 to 18':
@@ -478,14 +935,35 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             elif response_event.content == '19 to 36':
                 range_bet = '19 to 36'
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = "[ERROR]: Inavlid Input. Program Terminated. Please Try Again."
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!roulette")    
+                await message.channel.send(file=file, embed=embed)
                 error = True
-            await message.channel.send(f"How much are you wagering for {range_bet}?")
+            # await message.channel.send(f"How much are you wagering for {range_bet}?")
+            string = f"How much are you wagering for {range_bet}?"
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!blackjack")    
+            await message.channel.send(file=file, embed=embed)
             response_wage = await client.wait_for('message', check=check, timeout=30)
             if response_wage.content.isdigit():
                 wage += int(response_wage.content)
                 if wage + total_bet > originalBalance:
-                    await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+                    string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!roulette")    
+                    await message.channel.send(file=file, embed=embed)
                     error = True
                 else:
                     total_bet += wage
@@ -494,10 +972,24 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     bet_list.append(bet)
         elif response_where_content == '!endbets':
             con = False
-            await message.channel.send("No more bets.")
+            # await message.channel.send("No more bets.")
+            string = "No more bets."
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
         else:
             con = False
-            await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+            # await message.channel.send("[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again.")
+            string = "[ERROR]: Total bet over player's balance. Program Terminated. Please Try Again."
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
             error = True
         bet_list = list(set(bet_list))
         
@@ -525,14 +1017,14 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                 else:
                     total -= bet[2]
             elif command == '!row':
-                if color == bet[1]:
+                if row == bet[1]:
                     total += bet[2] * bet[3]
                     user_db.update_total_earnings(discord_name_cleaned, total)
                     continue
                 else:
                     total -= bet[2]            
             elif command == '!column':
-                if color == bet[1]:
+                if column == bet[1]:
                     total += bet[2] * bet[3]
                     user_db.update_total_earnings(discord_name_cleaned, total)
                     continue
@@ -540,7 +1032,7 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                     total -= bet[2]
                     
             elif command == '!group':
-                if color == bet[1]:
+                if group == bet[1]:
                     total += bet[2] * bet[3]
                     user_db.update_total_earnings(discord_name_cleaned, total)
                     continue
@@ -555,14 +1047,14 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
                 else:
                     total -= bet[2]
             elif command == '!range':
-                if color == bet[1]:
+                if number_range == bet[1]:
                     total += bet[2] * bet[3]
                     user_db.update_total_earnings(discord_name_cleaned, total)
                     continue
                 else:
                     total -= bet[2]
             elif command == '!parity':
-                if color == bet[1]:
+                if parity == bet[1]:
                     total += bet[2] * bet[3]
                     user_db.update_total_earnings(discord_name_cleaned, total)
                     continue
@@ -576,7 +1068,14 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             activity = f'{date} - Won ${total} playing roulette on {current_date}'
             user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
             user_db.update_last_activity(discord_name_cleaned, activity)
-            await message.channel.send(f'{discord_name} won ${total} playing roulette.')
+            # await message.channel.send(f'{discord_name} won ${total} playing roulette.')            
+            string = f'{discord_name} won ${total} playing roulette.'
+            embed = discord.Embed(description=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
         else:
             user_db.update_balance(discord_name_cleaned, total)
             current_date = str(datetime.datetime.now().date())
@@ -585,7 +1084,14 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
             activity = f'{date} - Lost ${abs(total)} playing roulette on {current_date}'
             user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
             user_db.update_last_activity(discord_name_cleaned, activity)
-            await message.channel.send(f'{discord_name} lost ${abs(total)} playing roulette.')
+            # await message.channel.send(f'{discord_name} lost ${abs(total)} playing roulette.')
+            string = f'{discord_name} lost ${abs(total)} playing roulette.'
+            embed = discord.Embed(description=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!roulette")    
+            await message.channel.send(file=file, embed=embed)
     else:
         print("errors")
 
@@ -593,7 +1099,14 @@ async def roulette(message : discord.message.Message, client: discord.Client, us
 async def slots(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
         return m.author == message.author and m.channel == message.channel
-    await message.channel.send("How much are you wagering per spin?")
+    # await message.channel.send("How much are you wagering per spin?")
+    string = "How much are you wagering per spin?"
+    embed = discord.Embed(title=string, color=0x50C878)
+    file = discord.File('images/icon.png', filename='icon.png')
+    embed.set_thumbnail(url='attachment://icon.png')
+    embed.set_author(name="Gambling-Bot says:")
+    embed.set_footer(text="!slots")
+    await message.channel.send(file=file, embed=embed)
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
@@ -609,10 +1122,22 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
             result = ' | '.join(row) + '\n'
             result_grid.append(result)
             result_grid.append(('-' * 11) + '\n')
-        await message.channel.send(f'''\nYour Balance is: ${newBalance}. Here is the slot machine:
+        # await message.channel.send(f'''\nYour Balance is: ${newBalance}. Here is the slot machine:
+        # {''.join(result_grid)}
+        # Enter an option: (!spin - spin the slot | !change - to change wager amount | !exit - cash out of slot machine)
+        # ''')
+        string = f'''\nYour Balance is: ${newBalance}. Here is the slot machine:
         {''.join(result_grid)}
-        Enter an option: (!spin - spin the slot | !change - to change wager amount | !exit - cash out of slot machine)
-        ''')
+        Enter an option'''
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.add_field(name="**!spin**", value="Spins the slot machine.", inline= False)
+        embed.add_field(name="**!change**", value="Changes the wager amount of each spin.", inline= False)
+        embed.add_field(name="**!exit**", value="Exits the slot machine page.", inline= False)
+        embed.set_footer(text="!slots")
+        await message.channel.send(file=file, embed=embed)
         while newBalance > 0 and con and wage <= newBalance:            
             response = await client.wait_for('message', check=check, timeout=30)
             user_response = response.content
@@ -643,13 +1168,34 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
                 response = await client.wait_for('message', check=check, timeout=30)
                 if response.content.isdigit() and int(response.content) <= newBalance:
                     wage = int(response.content)
-                    await message.channel.send(f'Wager amount changed to ${wage}')
+                    # await message.channel.send(f'Wager amount changed to ${wage}')
+                    string = f'Wager amount changed to ${wage}'
+                    embed = discord.Embed(title=string, color=0x50C878)
+                    file = discord.File('images/icon.png', filename='icon.png')
+                    embed.set_thumbnail(url='attachment://icon.png')
+                    embed.set_author(name="Gambling-Bot says:")
+                    embed.set_footer(text="!slots")
+                    await message.channel.send(file=file, embed=embed)
                 result_price = ''
             elif user_response == '!exit':
-                await message.channel.send(f'{response.author.mention} has exited.')
+                # await message.channel.send(f'{response.author.mention} has exited.')
+                exit_string = f'{response.author.mention} has exited.'
+                exit_embed = discord.Embed(description=exit_string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                exit_embed.set_thumbnail(url='attachment://icon.png')
+                exit_embed.set_author(name="Gambling-Bot says:")
+                exit_embed.set_footer(text="!exit")
+                await message.channel.send(file=file, embed=exit_embed)
                 break
             else:
-                await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+                string = f'[ERROR]: Invalid Input. Program Terminated. Please Try Again.'
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!coinfip")
+                await message.channel.send(file=file, embed=embed)
                 break
             
             if newBalance > 0 and wage <= newBalance:
@@ -660,12 +1206,32 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
                     result = ' | '.join(row) + '\n'
                     result_grid.append(result)
                     result_grid.append(('-' * 11) + '\n')
-                await message.channel.send(f'''{result_price}Your Balance is: ${newBalance}. Here is the slot machine:
+                # await message.channel.send(f'''{result_price}Your Balance is: ${newBalance}. Here is the slot machine:
+                # {''.join(result_grid)}
+                # Enter an option: (!spin - spin the slot | !change - to change wager amount | !exit - cash out of slot machine)
+                # ''')
+                string = f'''{result_price}Your Balance is: ${newBalance}. Here is the slot machine:
                 {''.join(result_grid)}
-                Enter an option: (!spin - spin the slot | !change - to change wager amount | !exit - cash out of slot machine)
-                ''')
+                Enter an option'''
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.add_field(name="**!spin**", value="Spins the slot machine.")
+                embed.add_field(name="**!change**", value="Changes the wager amount of each spin.")
+                embed.add_field(name="**!exit**", value="Exits the slot machine page.")
+                embed.set_footer(text="!slots")
+                print("meep")
+                await message.channel.send(file=file, embed=embed)
             else:
-                await message.channel.send(f'''"Game over! {discord_name} ran out of money."''')
+                # await message.channel.send(f'''"Game over! {discord_name} ran out of money."''')
+                string = f'''"Game over! {discord_name} ran out of money."'''
+                embed = discord.Embed(title=string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!slots")
+                await message.channel.send(file=file, embed=embed)
         difference = newBalance - originalBalance
         if difference > -1:
             user_db.update_balance(discord_name_cleaned, difference)
@@ -675,7 +1241,14 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
             activity = f'{date} - Won ${difference} playing slots on {current_date}'
             user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
             user_db.update_last_activity(discord_name_cleaned, activity)
-            await message.channel.send(f'{discord_name} won ${difference} playing slots.')
+            # await message.channel.send(f'{discord_name} won ${difference} playing slots.')
+            string = f'{discord_name} won ${difference} playing slots.'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!slots")
+            await message.channel.send(file=file, embed=embed)
         else:
             user_db.update_balance(discord_name_cleaned, difference)
             current_date = str(datetime.datetime.now().date())
@@ -684,23 +1257,54 @@ async def slots(message : discord.message.Message, client: discord.Client, user_
             activity = f'{date} - Lost ${abs(difference)} playing slots on {current_date}'
             user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
             user_db.update_last_activity(discord_name_cleaned, activity)
-            await message.channel.send(f'{discord_name} lost ${abs(difference)} playing slots.')
+            # await message.channel.send(f'{discord_name} lost ${abs(difference)} playing slots.')
+            string = f'{discord_name} lost ${abs(difference)} playing slots.'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!slots")
+            await message.channel.send(file=file, embed=embed)
 
 # GUESS THE NUMBER
 async def guess(message : discord.message.Message, client: discord.Client, user_db : UserDatabase):
     def check(m):
         return m.author == message.author and m.channel == message.channel
-    await message.channel.send("How much are you wagering?")
+    # await message.channel.send("How much are you wagering?")
+    string = f"How much are you wagering?"
+    embed = discord.Embed(title=string, color=0x50C878)
+    file = discord.File('images/icon.png', filename='icon.png')
+    embed.set_thumbnail(url='attachment://icon.png')
+    embed.set_author(name="Gambling-Bot says:")
+    embed.set_footer(text="!guess")
+    await message.channel.send(file=file, embed=embed)
     response = await client.wait_for('message', check=check, timeout=30)
     discord_name = response.author.mention
     discord_name_cleaned = discord_name.replace('<', '').replace('>', '').replace('@', '')
     originalBalance = user_db.get_balance(discord_name_cleaned)
     if response.content.isdigit() and int(response.content) <= originalBalance:
         wage = int(response.content)
-        await message.channel.send("What stake do you want to do? (1) (0 - 10) **1x Multiplier** | (2) (0 - 50) **5x Multiplier** | (3) (0 - 100) **10x Multiplier**)")
+        # await message.channel.send("What stake do you want to do? (1) (0 - 10) **1x Multiplier** | (2) (0 - 50) **5x Multiplier** | (3) (0 - 100) **10x Multiplier**)")
+        title = "What stake do you want to do?"
+        embed = discord.Embed(title=title, description= '\n', color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.add_field(name="**1x**", value="(0 - 10) **1x Multiplier**", inline= False)
+        embed.add_field(name="**5x**", value="(0 - 50) **5x Multiplier**", inline= False)
+        embed.add_field(name="**10x**", value="(0 - 100) **10x Multiplier**)", inline= False)
+        embed.set_footer(text="!guess")
+        await message.channel.send(file=file, embed=embed)
         response = await client.wait_for('message', check=check, timeout=30)
-        if response.content == '1':
-            await message.channel.send("Please give a number between 0 - 10")
+        if response.content == '1x':
+            # await message.channel.send("Please give a number between 0 - 10")
+            title = "Please give a number between 0 - 10"
+            embed = discord.Embed(title=title, description= '\n', color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!guess")
+            await message.channel.send(file=file, embed=embed)
             random_number = random.randint(0, 10)
             response = await client.wait_for('message', check=check, timeout=30)
             if response.content == random_number:
@@ -708,11 +1312,19 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
                 current_date = str(datetime.datetime.now().date())
                 current_time = str(datetime.datetime.now().time())
                 date = f'{current_date}T{current_time}'
+                await message.channel.send(file=file, embed=embed)
                 activity = f'{date} - Won ${wage} playing guess the number on {current_date}'
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
                 user_db.update_total_earnings(discord_name_cleaned, wage)
-                await message.channel.send(f'{discord_name} won ${wage} guessing {random_number} in guessing the number')
+                # await message.channel.send(f'{discord_name} won ${wage} guessing {random_number} in guessing the number')
+                string = f'{discord_name} won ${wage} guessing {random_number} in guessing the number'
+                embed = discord.Embed(description= string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!guess")
+                await message.channel.send(file=file, embed=embed)
             else:
                 user_db.update_balance(discord_name_cleaned, -wage)
                 current_date = str(datetime.datetime.now().date())
@@ -721,9 +1333,23 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
                 activity = f'{date} - Lost ${wage} playing guess the number on {current_date}'
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
-                await message.channel.send(f'{discord_name} lost ${wage} guessing {random_number} in guessing the number')
-        elif response.content == '2':
-            await message.channel.send("Please give a number between 0 - 50")
+                # await message.channel.send(f'{discord_name} lost ${wage} guessing {random_number} in guessing the number')
+                string = f'{discord_name} lost ${wage} guessing {random_number} in guessing the number'
+                embed = discord.Embed(description= string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!guess")
+                await message.channel.send(file=file, embed=embed)
+        elif response.content == '5x':
+            # await message.channel.send("Please give a number between 0 - 50")
+            title = "Please give a number between 0 - 50"
+            embed = discord.Embed(title=title, description= '\n', color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!guess")
+            await message.channel.send(file=file, embed=embed)
             random_number = random.randint(0, 50)
             response = await client.wait_for('message', check=check, timeout=30)
             if response.content == random_number:
@@ -735,7 +1361,14 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
                 user_db.update_total_earnings(discord_name_cleaned, wage * 5)
-                await message.channel.send(f'{discord_name} won ${wage * 5} guessing {random_number} in guessing the number')
+                # await message.channel.send(f'{discord_name} won ${wage * 5} guessing {random_number} in guessing the number')
+                string = f'{discord_name} won ${wage * 5} guessing {random_number} in guessing the number'
+                embed = discord.Embed(description= string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!guess")
+                await message.channel.send(file=file, embed=embed)
             else:
                 user_db.update_balance(discord_name_cleaned, -wage)
                 current_date = str(datetime.datetime.now().date())
@@ -744,9 +1377,23 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
                 activity = f'{date} - Lost ${wage} playing guess the number on {current_date}'
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
-                await message.channel.send(f'{discord_name} lost ${wage} guessing {random_number} in guessing the number')
-        elif response.content == '3':
-            await message.channel.send("Please give a number between 0 - 100")
+                # await message.channel.send(f'{discord_name} lost ${wage} guessing {random_number} in guessing the number')
+                string = f'{discord_name} lost ${wage} guessing {random_number} in guessing the number'
+                embed = discord.Embed(description= string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!guess")
+                await message.channel.send(file=file, embed=embed)
+        elif response.content == '10x':
+            # await message.channel.send("Please give a number between 0 - 100")
+            title = "Please give a number between 0 - 100"
+            embed = discord.Embed(title=title, description= '\n', color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!guess")
+            await message.channel.send(file=file, embed=embed)
             random_number = random.randint(0, 100)
             response = await client.wait_for('message', check=check, timeout=30)
             if response.content == random_number:
@@ -758,7 +1405,14 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
                 user_db.update_total_earnings(discord_name_cleaned, wage * 10)
-                await message.channel.send(f'{discord_name} won ${wage * 10} guessing {random_number} in guessing the number')
+                # await message.channel.send(f'{discord_name} won ${wage * 10} guessing {random_number} in guessing the number')
+                string = f'{discord_name} won ${wage * 10} guessing {random_number} in guessing the number'
+                embed = discord.Embed(description= string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!guess")
+                await message.channel.send(file=file, embed=embed)
             else:
                 user_db.update_balance(discord_name_cleaned, -wage)
                 current_date = str(datetime.datetime.now().date())
@@ -767,6 +1421,28 @@ async def guess(message : discord.message.Message, client: discord.Client, user_
                 activity = f'{date} - Lost ${wage} playing guess the number on {current_date}'
                 user_db.add_user_activity(discord_name_cleaned, activity, f'{current_date}')
                 user_db.update_last_activity(discord_name_cleaned, activity)
-                await message.channel.send(f'{discord_name} lost ${wage} guessing {random_number} in guessing the number')
+                # await message.channel.send(f'{discord_name} lost ${wage} guessing {random_number} in guessing the number')
+                string = f'{discord_name} lost ${wage} guessing {random_number} in guessing the number'
+                embed = discord.Embed(description= string, color=0x50C878)
+                file = discord.File('images/icon.png', filename='icon.png')
+                embed.set_thumbnail(url='attachment://icon.png')
+                embed.set_author(name="Gambling-Bot says:")
+                embed.set_footer(text="!guess")
+                await message.channel.send(file=file, embed=embed)
         else:
-            await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+            # await message.channel.send("[ERROR]: Inavlid Input. Program Terminated. Please Try Again.")
+            string = f'[ERROR]: Invalid Input. Program Terminated. Please Try Again.'
+            embed = discord.Embed(title=string, color=0x50C878)
+            file = discord.File('images/icon.png', filename='icon.png')
+            embed.set_thumbnail(url='attachment://icon.png')
+            embed.set_author(name="Gambling-Bot says:")
+            embed.set_footer(text="!guess")
+            await message.channel.send(file=file, embed=embed)
+    else:
+        string = f'[ERROR]: Wager is larger than current balance. Program Terminated. Please Try Again.'
+        embed = discord.Embed(title=string, color=0x50C878)
+        file = discord.File('images/icon.png', filename='icon.png')
+        embed.set_thumbnail(url='attachment://icon.png')
+        embed.set_author(name="Gambling-Bot says:")
+        embed.set_footer(text="!guess")
+        await message.channel.send(file=file, embed=embed)

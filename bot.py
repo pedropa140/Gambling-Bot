@@ -45,7 +45,6 @@ def run_discord_bot():
 
     async def process_command(message : discord.message.Message, client : discord.Client):
         command, *args = message.content.split()
-        
         if command == '!hello':
             await regular_responses.hello(message)
         elif command == '!roll_dice':
